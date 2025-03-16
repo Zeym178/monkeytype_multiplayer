@@ -1,8 +1,13 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:monkeytype_multiplayer_app/pages/results_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +18,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final FocusNode _focusNode = FocusNode();
+
   final String TypeText =
       "hola como estamos el dia de hoy mis compadres y comadres, como les va el dia de hoy, no me la counter strike";
   late String userText;
@@ -24,14 +30,55 @@ class _HomePageState extends State<HomePage> {
   bool isRight = true;
   int wrongsf = 0;
   int wordsIniIndex = 0;
+  int wordsTypedRight = 0;
+
+  double cpmsf = 0;
+  double cpm = 0;
+
+  int isTyping = -1;
+
+  Timer? _timer;
+  Stopwatch _stopwatch = Stopwatch();
+  double _timespan = 0.0;
+
+  void startTimer() {
+    _stopwatch.reset();
+    _stopwatch.start();
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _timespan = _stopwatch.elapsedMilliseconds.toDouble();
+        cpm = wordsTypedRight * 60 / (_timespan / 1000);
+      });
+    });
+  }
+
+  void stopTimer() {
+    _stopwatch.stop();
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  void finishTest() {
+    _timespan = _stopwatch.elapsedMilliseconds.toDouble();
+    stopTimer();
+    // cpm =  wordsTypedRight * 60 / (_timespan / 1000)
+    print("words typed right: " + wordsTypedRight.toString());
+    cpm = wordsTypedRight * 60 / (_timespan / 1000);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => ResultsPage(cpm: cpm)),
+    );
+  }
 
   void getListValues() {
     setState(() {
       int auxcount = 0;
       _words.clear();
       for (int i = 0; i < _text.length; i++) {
+        _text[i]['index'] = i;
         if (_text[i]['char'] == " ") {
-          _words.add(_text.sublist(auxcount, i));
+          _words.add(_text.sublist(auxcount, i + 1));
           auxcount = i + 1;
         }
       }
@@ -47,9 +94,9 @@ class _HomePageState extends State<HomePage> {
     int auxcount = 0;
     wordsIni.add(0);
     for (int i = 0; i < TypeText.length; i++) {
-      _text.add({"char": TypeText[i], "color": 0});
+      _text.add({"char": TypeText[i], "color": 0, "index": i});
       if (TypeText[i] == " ") {
-        _words.add(_text.sublist(auxcount, i));
+        _words.add(_text.sublist(auxcount, i + 1));
         auxcount = i + 1;
         wordsIni.add(i + 1);
       }
@@ -64,53 +111,71 @@ class _HomePageState extends State<HomePage> {
   }
 
   void compare(String key) {
-    setState(() {
-      if (wrongsf == 0) {
-        isRight = true;
-        wrongsf = 0;
-      }
-      if (!isRight && key == ' ' && _text[userIndex]['char'] != ' ') {
-        wrongsf = 0;
-        isRight = true;
-        wordsIniIndex++;
-        int newindex = wordsIni[wordsIniIndex] - originalIndex;
-        originalIndex = wordsIni[wordsIniIndex];
-        userIndex += newindex;
-        return;
-      }
-      if (isRight && key == ' ' && _text[userIndex]['char'] == ' ') {
-        wordsIniIndex++;
-      } else if (isRight && key == ' ') {
-        return;
-      }
-      if (key == 'Backspace') {
-        if (wrongsf > 0) {
-          _text = _text.sublist(0, userIndex - 1) + _text.sublist(userIndex);
-          getListValues();
-          userIndex--;
-          wrongsf--;
+    // at the beggining of everything I guess lol
+    if (isTyping == -1) {
+      startTimer();
+    }
+
+    // the rest of the time
+    if (isTyping != 0) {
+      setState(() {
+        isTyping = 1;
+        if (originalIndex >= TypeText.length - 1) {
+          isTyping = 0;
         }
-        return;
-      }
-      if (key != TypeText[originalIndex] || !isRight) {
-        _text =
-            _text.sublist(0, userIndex) +
-            [
-              {'char': key, 'color': -1},
-            ] +
-            _text.sublist(userIndex);
+        if (wrongsf == 0) {
+          isRight = true;
+          wrongsf = 0;
+        }
+        if (!isRight && key == ' ' && _text[userIndex]['char'] != ' ') {
+          wrongsf = 0;
+          isRight = true;
+          wordsIniIndex++;
+          int newindex = wordsIni[wordsIniIndex] - originalIndex;
+          originalIndex = wordsIni[wordsIniIndex];
+          userIndex += newindex;
+          return;
+        }
+        if (isRight && key == ' ' && _text[userIndex]['char'] == ' ') {
+          wordsIniIndex++;
+        } else if (isRight && key == ' ') {
+          return;
+        }
+        if (key == 'Backspace') {
+          if (wrongsf > 0) {
+            _text = _text.sublist(0, userIndex - 1) + _text.sublist(userIndex);
+            getListValues();
+            userIndex--;
+            wrongsf--;
+          }
+          return;
+        }
+        if (key != TypeText[originalIndex] || !isRight) {
+          _text =
+              _text.sublist(0, userIndex) +
+              [
+                {'char': key, 'color': -1},
+              ] +
+              _text.sublist(userIndex);
+          getListValues();
+          userIndex++;
+          wrongsf++;
+          isRight = false;
+          return;
+        }
+        wordsTypedRight++;
+        _text[userIndex]['color'] = 1;
         getListValues();
         userIndex++;
-        wrongsf++;
-        isRight = false;
-        return;
+        originalIndex++;
+      });
+
+      // user's has finished mman
+      print(TypeText);
+      if (isTyping == 0) {
+        finishTest();
       }
-      _text[userIndex]['color'] = 1;
-      getListValues();
-      userIndex++;
-      originalIndex++;
-    });
-    print(TypeText);
+    }
   }
 
   @override
@@ -213,6 +278,13 @@ class _HomePageState extends State<HomePage> {
             //     },
             //   ),
             // ),
+            Container(
+              width: MediaQuery.of(context).size.width * .8,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text((cpm / 5).toString()),
+              ),
+            ),
 
             // way number two
             Container(
@@ -226,7 +298,6 @@ class _HomePageState extends State<HomePage> {
                   return Container(
                     height: 40,
                     // color: Colors.blue,
-                    margin: EdgeInsets.only(right: 10),
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
@@ -234,22 +305,85 @@ class _HomePageState extends State<HomePage> {
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, windex) {
                         final currentword = _words[index][windex];
-                        return Text(
-                          currentword['char'],
-                          style: TextStyle(
-                            fontSize: 30,
-                            color:
-                                ((currentword['color'] == 1
-                                    ? Colors.green
-                                    : (currentword['color'] == -1
-                                        ? Colors.red
-                                        : mytheme.inversePrimary))),
-                          ),
+                        return Stack(
+                          children: [
+                            Container(
+                              child: Text(
+                                currentword['char'],
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  color:
+                                      ((currentword['color'] == 1
+                                          ? Colors.green
+                                          : (currentword['color'] == -1
+                                              ? Colors.red
+                                              : mytheme.inversePrimary))),
+                                ),
+                              ),
+                            ),
+                            Positioned.directional(
+                              textDirection: TextDirection.ltr,
+                              start: -2,
+                              top: 5,
+                              bottom: 5,
+                              child:
+                                  currentword['index'] == userIndex
+                                      ? Center(
+                                        child: Container(
+                                          width: 5,
+                                          height: 30,
+                                          color: mytheme.secondary,
+                                        ),
+                                      )
+                                      : Container(),
+                            ),
+                          ],
                         );
                       },
                     ),
                   );
                 }),
+              ),
+            ),
+
+            Container(
+              width: 500,
+              height: 200,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      startTimer();
+                    },
+                    child: Container(color: Colors.green, width: 200),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      stopTimer();
+                    },
+                    child: Container(color: Colors.red, width: 200),
+                  ),
+                ],
+              ),
+            ),
+
+            Container(
+              height: 50,
+              width: 50,
+              color:
+                  isTyping == 1
+                      ? Colors.green
+                      : isTyping == -1
+                      ? mytheme.inversePrimary
+                      : Colors.blue,
+              child: Center(
+                child: Text(
+                  isTyping == 1
+                      ? "is typing"
+                      : isTyping == -1
+                      ? "hasn't started yet"
+                      : "has finished",
+                ),
               ),
             ),
 
