@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,42 +13,100 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final FocusNode _focusNode = FocusNode();
-  final String TypeText = "hola como estamos el dia de hoy";
+  final String TypeText =
+      "hola como estamos el dia de hoy mis compadres y comadres, como les va el dia de hoy, no me la counter strike";
   late String userText;
   int originalIndex = 0, userIndex = 0;
   late int originalSize;
   List<Map> _text = [];
+  List<List> _words = [];
+  List wordsIni = [];
+  bool isRight = true;
+  int wrongsf = 0;
+  int wordsIniIndex = 0;
+
+  void getListValues() {
+    setState(() {
+      int auxcount = 0;
+      _words.clear();
+      for (int i = 0; i < _text.length; i++) {
+        if (_text[i]['char'] == " ") {
+          _words.add(_text.sublist(auxcount, i));
+          auxcount = i + 1;
+        }
+      }
+      _words.add(_text.sublist(auxcount, _text.length));
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     originalSize = TypeText.length;
     userText = TypeText;
+    int auxcount = 0;
+    wordsIni.add(0);
     for (int i = 0; i < TypeText.length; i++) {
-      _text.add({"char": TypeText[i], "color": 1});
+      _text.add({"char": TypeText[i], "color": 0});
+      if (TypeText[i] == " ") {
+        _words.add(_text.sublist(auxcount, i));
+        auxcount = i + 1;
+        wordsIni.add(i + 1);
+      }
     }
+    _words.add(_text.sublist(auxcount, TypeText.length));
+
+    // for (int i = 0; i < _words.length; i++) {
+    //   print(_words[i]);
+    // }
+
     super.initState();
   }
 
   void compare(String key) {
     setState(() {
+      if (wrongsf == 0) {
+        isRight = true;
+        wrongsf = 0;
+      }
+      if (!isRight && key == ' ' && _text[userIndex]['char'] != ' ') {
+        wrongsf = 0;
+        isRight = true;
+        wordsIniIndex++;
+        int newindex = wordsIni[wordsIniIndex] - originalIndex;
+        originalIndex = wordsIni[wordsIniIndex];
+        userIndex += newindex;
+        return;
+      }
+      if (isRight && key == ' ' && _text[userIndex]['char'] == ' ') {
+        wordsIniIndex++;
+      } else if (isRight && key == ' ') {
+        return;
+      }
       if (key == 'Backspace') {
-        if (userIndex > originalIndex) {
-          userText =
-              userText.substring(0, userIndex - 1) +
-              TypeText.substring(originalIndex);
+        if (wrongsf > 0) {
+          _text = _text.sublist(0, userIndex - 1) + _text.sublist(userIndex);
+          getListValues();
           userIndex--;
+          wrongsf--;
         }
         return;
       }
-      if (key != TypeText[originalIndex]) {
-        userText =
-            userText.substring(0, userIndex) +
-            key +
-            TypeText.substring(originalIndex);
+      if (key != TypeText[originalIndex] || !isRight) {
+        _text =
+            _text.sublist(0, userIndex) +
+            [
+              {'char': key, 'color': -1},
+            ] +
+            _text.sublist(userIndex);
+        getListValues();
         userIndex++;
+        wrongsf++;
+        isRight = false;
         return;
       }
+      _text[userIndex]['color'] = 1;
+      getListValues();
       userIndex++;
       originalIndex++;
     });
@@ -120,28 +180,79 @@ class _HomePageState extends State<HomePage> {
                 ],
               ), // up bar
             ),
-            Expanded(
-              child: GridView.builder(
-                itemCount: _text.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 50,
-                ),
-                itemBuilder: (context, index) {
+
+            // // way number 1
+            // Container(
+            //   width: MediaQuery.of(context).size.width * .8,
+            //   height: 100,
+            //   color: Colors.red,
+            //   child: GridView.builder(
+            //     itemCount: _text.length,
+            //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //       crossAxisCount:
+            //           (MediaQuery.of(context).size.width / 30).toInt(),
+            //     ),
+            //     itemBuilder: (context, index) {
+            //       return Container(
+            //         height: 100,
+            //         color: Colors.white,
+            //         child: Align(
+            //           alignment: Alignment.topCenter,
+            //           child: Text(
+            //             _text[index]['char'],
+            //             style: TextStyle(
+            //               color:
+            //                   _text[index]['color'] == 1
+            //                       ? Colors.green
+            //                       : Colors.red,
+            //               fontSize: 20,
+            //             ),
+            //           ),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
+
+            // way number two
+            Container(
+              width: MediaQuery.of(context).size.width * .8,
+              height: 120,
+              // decoration: BoxDecoration(color: Colors.red),
+              decoration: BoxDecoration(),
+              clipBehavior: Clip.hardEdge,
+              child: Wrap(
+                children: List.generate(_words.length, (index) {
                   return Container(
-                    width: double.infinity,
-                    child: Text(
-                      _text[index]['char'],
-                      style: TextStyle(
-                        color:
-                            _text[index]['color'] == 1
-                                ? Colors.green
-                                : Colors.red,
-                      ),
+                    height: 40,
+                    // color: Colors.blue,
+                    margin: EdgeInsets.only(right: 10),
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: _words[index].length,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, windex) {
+                        final currentword = _words[index][windex];
+                        return Text(
+                          currentword['char'],
+                          style: TextStyle(
+                            fontSize: 30,
+                            color:
+                                ((currentword['color'] == 1
+                                    ? Colors.green
+                                    : (currentword['color'] == -1
+                                        ? Colors.red
+                                        : mytheme.inversePrimary))),
+                          ),
+                        );
+                      },
                     ),
                   );
-                },
+                }),
               ),
             ),
+
             KeyboardListener(
               focusNode: _focusNode,
               autofocus: true,
