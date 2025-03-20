@@ -12,16 +12,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int pageIndex = 0;
-  double cpm = 0;
+  // double cpm = 0;
+  final ValueNotifier<double> cpm = ValueNotifier(0.0);
   void togglePage(int index) {
     setState(() {
       pageIndex = index;
     });
   }
 
-  void getResults(double testCpm) {
+  void hasFinished() {
     setState(() {
-      cpm = testCpm;
       pageIndex = 1;
     });
   }
@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
     final mytheme = Theme.of(context).colorScheme;
 
     final pages = [
-      SingletextPage(restultsPage: getResults),
-      ResultsPage(cpm: cpm, togglePage: togglePage),
+      SingletextPage(onFinish: hasFinished, cpm: cpm),
+      ResultsPage(cpm: cpm.value, togglePage: togglePage),
     ];
 
     return Theme(
@@ -97,6 +97,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ), // up bar
+            ),
+
+            Container(
+              alignment: Alignment.centerLeft,
+              child: ValueListenableBuilder(
+                valueListenable: cpm,
+                builder: (context, value, child) {
+                  return Text('WPM: ' + (cpm.value / 5).toString());
+                },
+              ),
             ),
 
             Expanded(child: pages[pageIndex]),

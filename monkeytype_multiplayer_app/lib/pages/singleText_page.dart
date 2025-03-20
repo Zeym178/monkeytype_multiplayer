@@ -1,11 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SingletextPage extends StatefulWidget {
-  final Function restultsPage;
-  const SingletextPage({super.key, required this.restultsPage});
+  final VoidCallback onFinish;
+  final ValueNotifier<double> cpm;
+  const SingletextPage({super.key, required this.onFinish, required this.cpm});
 
   @override
   State<SingletextPage> createState() => _SingletextPageState();
@@ -44,6 +44,7 @@ class _SingletextPageState extends State<SingletextPage> {
       setState(() {
         _timespan = _stopwatch.elapsedMilliseconds.toDouble();
         cpm = wordsTypedRight * 60 / (_timespan / 1000);
+        widget.cpm.value = cpm;
       });
     });
   }
@@ -60,7 +61,8 @@ class _SingletextPageState extends State<SingletextPage> {
     // cpm =  wordsTypedRight * 60 / (_timespan / 1000)
     print("words typed right: " + wordsTypedRight.toString());
     cpm = wordsTypedRight * 60 / (_timespan / 1000);
-    widget.restultsPage(cpm);
+    widget.cpm.value = cpm;
+    widget.onFinish();
   }
 
   void getListValues() {
@@ -176,21 +178,21 @@ class _SingletextPageState extends State<SingletextPage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width * .8,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                Text("WPM: "),
-                Text(
-                  (cpm / 5).toInt().toString(),
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // Container(
+        //   width: MediaQuery.of(context).size.width * .8,
+        //   child: Align(
+        //     alignment: Alignment.centerLeft,
+        //     child: Row(
+        //       children: [
+        //         Text("WPM: "),
+        //         Text(
+        //           (cpm / 5).toInt().toString(),
+        //           style: TextStyle(fontWeight: FontWeight.bold),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
 
         // way number two
         Container(
