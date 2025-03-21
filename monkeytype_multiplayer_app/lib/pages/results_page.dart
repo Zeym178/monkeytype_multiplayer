@@ -1,36 +1,156 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 
 class ResultsPage extends StatefulWidget {
-  final double cpm;
+  // final double cpm;
+  final Cpmcontroller cpmController;
   final Function togglePage;
-  const ResultsPage({super.key, required this.cpm, required this.togglePage});
+  const ResultsPage({
+    super.key,
+    required this.cpmController,
+    required this.togglePage,
+  });
 
   @override
   State<ResultsPage> createState() => _ResultsPageState();
 }
 
 class _ResultsPageState extends State<ResultsPage> {
+  List<FlSpot> getValues() {
+    List<FlSpot> ans = [];
+
+    for (var value in widget.cpmController.cpmReg) {
+      double cpmaux = ((value[1] / 5) * 100).round() / 100;
+      double timeaux = (value[0] * 100).round() / 100;
+      ans.add(FlSpot(timeaux, cpmaux));
+    }
+
+    return ans;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cpm = widget.cpm;
-    final wpm = widget.cpm / 5;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(child: Text(cpm.toString())),
-        Center(child: Text(wpm.toString())),
-        GestureDetector(
-          onTap: () => widget.togglePage(0),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            child: Text('go back to another test you slow ass mf'),
+    final mytheme = Theme.of(context).colorScheme;
+    final cpm = widget.cpmController.cpm.value;
+    final wpm = widget.cpmController.cpm.value / 5;
+    return Container(
+      width: MediaQuery.of(context).size.width * .8,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                height: 220,
+                width: 250,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'WPM',
+                      style: TextStyle(fontSize: 20, color: mytheme.primary),
+                    ),
+                    Text(
+                      wpm.toInt().toString(),
+                      style: TextStyle(fontSize: 50, color: mytheme.secondary),
+                    ),
+                    Text(
+                      'ACC',
+                      style: TextStyle(fontSize: 20, color: mytheme.primary),
+                    ),
+                    Text(
+                      "100%",
+                      style: TextStyle(fontSize: 50, color: mytheme.secondary),
+                    ),
+                  ],
+                ),
+              ),
+
+              Expanded(
+                child: Container(
+                  height: 220,
+                  child: LineChart(
+                    LineChartData(
+                      gridData: FlGridData(show: false),
+                      minY: 0,
+                      minX: 1,
+                      borderData: FlBorderData(show: false),
+                      titlesData: FlTitlesData(
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 30,
+                            interval: 1,
+                            minIncluded: true,
+                            maxIncluded: true,
+                            getTitlesWidget: (value, met) {
+                              return Container(
+                                alignment: Alignment.topCenter,
+                                margin: EdgeInsets.only(top: 10),
+                                child: Text(
+                                  value.toString(),
+                                  style: TextStyle(color: mytheme.primary),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              return Container(
+                                alignment: Alignment.centerRight,
+                                margin: EdgeInsets.only(right: 10),
+                                child: Text(
+                                  value.toString(),
+                                  style: TextStyle(color: mytheme.primary),
+                                ),
+                              );
+                            },
+                            reservedSize: 50,
+                            minIncluded: true,
+                            maxIncluded: false,
+                          ),
+                        ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                      ),
+                      lineBarsData: [
+                        LineChartBarData(
+                          belowBarData: BarAreaData(
+                            show: true,
+                            color: Color(0xff2C2E31),
+                          ),
+                          spots: getValues(),
+                          isCurved: true,
+                          color: mytheme.secondary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+
+          GestureDetector(
+            onTap: () => widget.togglePage(0),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              child: Text('go back to another test you slow ass mf'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

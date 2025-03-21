@@ -1,21 +1,27 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 
-class SingletextPage extends StatefulWidget {
+class Textsection extends StatefulWidget {
   final VoidCallback onFinish;
-  final ValueNotifier<double> cpm;
-  const SingletextPage({super.key, required this.onFinish, required this.cpm});
+  final Cpmcontroller cpmController;
+  const Textsection({
+    super.key,
+    required this.onFinish,
+    required this.cpmController,
+  });
 
   @override
-  State<SingletextPage> createState() => _SingletextPageState();
+  State<Textsection> createState() => _Textsection();
 }
 
-class _SingletextPageState extends State<SingletextPage> {
+class _Textsection extends State<Textsection> {
   final FocusNode _focusNode = FocusNode();
 
   final String TypeText =
-      "hola como estamos el dia de hoy mis compadres y comadres, como les va el dia de hoy, no me la counter strike";
+      // "hola como estamos el dia de hoy mis compadres y comadres, como les va el dia de hoy, no me la counter strike";
+      "hola como estamos el dia de hoy";
   late String userText;
   int originalIndex = 0, userIndex = 0;
   late int originalSize;
@@ -44,7 +50,8 @@ class _SingletextPageState extends State<SingletextPage> {
       setState(() {
         _timespan = _stopwatch.elapsedMilliseconds.toDouble();
         cpm = wordsTypedRight * 60 / (_timespan / 1000);
-        widget.cpm.value = cpm;
+        widget.cpmController.cpm.value = cpm;
+        widget.cpmController.cpmReg.add([_timespan / 1000, cpm]);
       });
     });
   }
@@ -61,7 +68,8 @@ class _SingletextPageState extends State<SingletextPage> {
     // cpm =  wordsTypedRight * 60 / (_timespan / 1000)
     print("words typed right: " + wordsTypedRight.toString());
     cpm = wordsTypedRight * 60 / (_timespan / 1000);
-    widget.cpm.value = cpm;
+    widget.cpmController.cpm.value = cpm;
+    widget.cpmController.cpmReg.add([_timespan / 1000, cpm]);
     widget.onFinish();
   }
 
@@ -83,6 +91,7 @@ class _SingletextPageState extends State<SingletextPage> {
   @override
   void initState() {
     // TODO: implement initState
+    widget.cpmController.clearController();
     originalSize = TypeText.length;
     userText = TypeText;
     int auxcount = 0;

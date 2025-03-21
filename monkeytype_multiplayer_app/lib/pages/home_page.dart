@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 import 'package:monkeytype_multiplayer_app/pages/results_page.dart';
-import 'package:monkeytype_multiplayer_app/pages/singleText_page.dart';
+import 'package:monkeytype_multiplayer_app/pages/singleTest_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,9 +12,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int pageIndex = 0;
+  int pageIndex = 1;
   // double cpm = 0;
-  final ValueNotifier<double> cpm = ValueNotifier(0.0);
+  // final ValueNotifier<double> cpm = ValueNotifier(0.0);
+  Cpmcontroller cpmController = Cpmcontroller();
   void togglePage(int index) {
     setState(() {
       pageIndex = index;
@@ -31,8 +33,8 @@ class _HomePageState extends State<HomePage> {
     final mytheme = Theme.of(context).colorScheme;
 
     final pages = [
-      SingletextPage(onFinish: hasFinished, cpm: cpm),
-      ResultsPage(cpm: cpm.value, togglePage: togglePage),
+      SingletestPage(togglePage: togglePage, cpmcontroller: cpmController),
+      ResultsPage(cpmController: cpmController, togglePage: togglePage),
     ];
 
     return Theme(
@@ -97,16 +99,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ), // up bar
-            ),
-
-            Container(
-              alignment: Alignment.centerLeft,
-              child: ValueListenableBuilder(
-                valueListenable: cpm,
-                builder: (context, value, child) {
-                  return Text('WPM: ' + (cpm.value / 5).toString());
-                },
-              ),
             ),
 
             Expanded(child: pages[pageIndex]),
