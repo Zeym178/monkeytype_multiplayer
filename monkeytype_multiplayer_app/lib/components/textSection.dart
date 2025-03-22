@@ -6,10 +6,12 @@ import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 class Textsection extends StatefulWidget {
   final VoidCallback onFinish;
   final Cpmcontroller cpmController;
+  final String testText;
   const Textsection({
     super.key,
     required this.onFinish,
     required this.cpmController,
+    required this.testText,
   });
 
   @override
@@ -19,9 +21,9 @@ class Textsection extends StatefulWidget {
 class _Textsection extends State<Textsection> {
   final FocusNode _focusNode = FocusNode();
 
-  final String TypeText =
-      // "hola como estamos el dia de hoy mis compadres y comadres, como les va el dia de hoy, no me la counter strike";
-      "hola como estamos el dia de hoy";
+  String TypeText = "";
+  // "hola como estamos el dia de hoy mis compadres y comadres, como les va el dia de hoy, no me la counter strike";
+  // "hola como estamos el dia de hoy";
   late String userText;
   int originalIndex = 0, userIndex = 0;
   late int originalSize;
@@ -29,9 +31,11 @@ class _Textsection extends State<Textsection> {
   List<List> _words = [];
   List wordsIni = [];
   bool isRight = true;
+  int wrongspspan = 0;
   int wrongsf = 0;
   int wordsIniIndex = 0;
   int wordsTypedRight = 0;
+  int wordsTypedWrong = 0;
 
   double cpmsf = 0;
   double cpm = 0;
@@ -50,8 +54,14 @@ class _Textsection extends State<Textsection> {
       setState(() {
         _timespan = _stopwatch.elapsedMilliseconds.toDouble();
         cpm = wordsTypedRight * 60 / (_timespan / 1000);
-        widget.cpmController.cpm.value = cpm;
-        widget.cpmController.cpmReg.add([_timespan / 1000, cpm]);
+        widget.cpmController.updateValues(
+          cpm,
+          _timespan / 1000,
+          wrongspspan,
+          wordsTypedRight,
+          wordsTypedWrong,
+        );
+        wrongspspan = 0;
       });
     });
   }
@@ -68,9 +78,23 @@ class _Textsection extends State<Textsection> {
     // cpm =  wordsTypedRight * 60 / (_timespan / 1000)
     print("words typed right: " + wordsTypedRight.toString());
     cpm = wordsTypedRight * 60 / (_timespan / 1000);
-    widget.cpmController.cpm.value = cpm;
-    widget.cpmController.cpmReg.add([_timespan / 1000, cpm]);
+    widget.cpmController.updateValues(
+      cpm,
+      _timespan / 1000,
+      wrongspspan,
+      wordsTypedRight,
+      wordsTypedWrong,
+    );
+    wrongspspan = 0;
     widget.onFinish();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    stopTimer();
   }
 
   void getListValues() {
@@ -92,6 +116,7 @@ class _Textsection extends State<Textsection> {
   void initState() {
     // TODO: implement initState
     widget.cpmController.clearController();
+    TypeText = widget.testText;
     originalSize = TypeText.length;
     userText = TypeText;
     int auxcount = 0;
@@ -163,6 +188,10 @@ class _Textsection extends State<Textsection> {
           getListValues();
           userIndex++;
           wrongsf++;
+          wordsTypedWrong++;
+          if (isRight) {
+            wrongspspan++;
+          }
           isRight = false;
           return;
         }

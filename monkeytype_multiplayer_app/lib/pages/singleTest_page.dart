@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/state_manager.dart';
+import 'package:monkeytype_multiplayer_app/components/testOptionsBar.dart';
 import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
-import 'package:monkeytype_multiplayer_app/pages/textSection.dart';
+import 'package:monkeytype_multiplayer_app/components/textSection.dart';
 
 class SingletestPage extends StatefulWidget {
   final Cpmcontroller cpmcontroller;
@@ -18,10 +19,20 @@ class SingletestPage extends StatefulWidget {
 }
 
 class _SingletestPageState extends State<SingletestPage> {
+  String testText = "hola como estas";
+
   @override
   Widget build(BuildContext context) {
+    final mytheme = Theme.of(context).colorScheme;
     return Column(
       children: [
+        Testoptionsbar(
+          onCustom:
+              (newtext) => setState(() {
+                testText = newtext;
+              }),
+        ),
+        SizedBox(height: 40),
         Container(
           width: MediaQuery.of(context).size.width * .8,
           alignment: Alignment.centerLeft,
@@ -34,9 +45,11 @@ class _SingletestPageState extends State<SingletestPage> {
           }),
         ),
         Textsection(
+          key: UniqueKey(),
           onFinish: () {
             widget.togglePage(1);
           },
+          testText: testText,
           cpmController: widget.cpmcontroller,
         ),
       ],

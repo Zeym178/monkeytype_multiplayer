@@ -7,4 +7,5 @@ ThemeData darkMode = ThemeData(
     secondary: Color(0xffE2B714),
     inversePrimary: Color(0xffD1D0C5),
   ),
+  hoverColor: Colors.red,
 );

@@ -29,11 +29,26 @@ class _ResultsPageState extends State<ResultsPage> {
     return ans;
   }
 
+  List<FlSpot> getWrongs() {
+    List<FlSpot> ans = [];
+
+    for (var value in widget.cpmController.cpmReg) {
+      if (value[2] > 0) {
+        final aux = widget.cpmController;
+        double maxwpm = aux.maxcpm / 5;
+        double timeaux = (value[0] * 100).round() / 100;
+        ans.add(FlSpot(timeaux, (value[2] * maxwpm / aux.maxwrongs)));
+      }
+    }
+
+    return ans;
+  }
+
   @override
   Widget build(BuildContext context) {
     final mytheme = Theme.of(context).colorScheme;
-    final cpm = widget.cpmController.cpm.value;
     final wpm = widget.cpmController.cpm.value / 5;
+    final acc = widget.cpmController.acc;
     return Container(
       width: MediaQuery.of(context).size.width * .8,
       child: Column(
@@ -41,26 +56,43 @@ class _ResultsPageState extends State<ResultsPage> {
           Row(
             children: [
               Container(
-                height: 220,
-                width: 250,
+                width: 180,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
                       'WPM',
                       style: TextStyle(fontSize: 20, color: mytheme.primary),
+                      textHeightBehavior: TextHeightBehavior(
+                        applyHeightToFirstAscent: false,
+                        applyHeightToLastDescent: false,
+                      ),
                     ),
                     Text(
                       wpm.toInt().toString(),
-                      style: TextStyle(fontSize: 50, color: mytheme.secondary),
+                      style: TextStyle(fontSize: 70, color: mytheme.secondary),
+                      textHeightBehavior: TextHeightBehavior(
+                        applyHeightToFirstAscent: false,
+                        applyHeightToLastDescent: false,
+                      ),
                     ),
                     Text(
                       'ACC',
                       style: TextStyle(fontSize: 20, color: mytheme.primary),
+                      textHeightBehavior: TextHeightBehavior(
+                        applyHeightToFirstAscent: false,
+                        applyHeightToLastDescent: false,
+                      ),
                     ),
                     Text(
-                      "100%",
-                      style: TextStyle(fontSize: 50, color: mytheme.secondary),
+                      // "100%",
+                      acc.toInt().toString() + "%",
+                      style: TextStyle(fontSize: 70, color: mytheme.secondary),
+                      textHeightBehavior: TextHeightBehavior(
+                        applyHeightToFirstAscent: false,
+                        applyHeightToLastDescent: false,
+                      ),
                     ),
                   ],
                 ),
@@ -129,6 +161,12 @@ class _ResultsPageState extends State<ResultsPage> {
                           spots: getValues(),
                           isCurved: true,
                           color: mytheme.secondary,
+                        ),
+                        LineChartBarData(
+                          spots: getWrongs(),
+                          isCurved: false,
+                          color: Colors.red,
+                          barWidth: 0,
                         ),
                       ],
                     ),

@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int pageIndex = 1;
+  int pageIndex = 0;
   // double cpm = 0;
   // final ValueNotifier<double> cpm = ValueNotifier(0.0);
   Cpmcontroller cpmController = Cpmcontroller();
@@ -83,20 +83,6 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   SizedBox(height: 40),
-
-                  Container(
-                    width: 700,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Color(0xff2C2E31),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        // main bar options ...
-                      ],
-                    ),
-                  ),
                 ],
               ), // up bar
             ),
