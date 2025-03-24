@@ -15,6 +15,7 @@ class _HovertextState extends State<Hovertext> {
   Widget build(BuildContext context) {
     final mytheme = Theme.of(context).colorScheme;
     return MouseRegion(
+      cursor: SystemMouseCursors.click,
       onEnter:
           (event) => setState(() {
             _isHovered = true;

@@ -115,7 +115,6 @@ class _Textsection extends State<Textsection> {
   @override
   void initState() {
     // TODO: implement initState
-    widget.cpmController.clearController();
     TypeText = widget.testText;
     originalSize = TypeText.length;
     userText = TypeText;

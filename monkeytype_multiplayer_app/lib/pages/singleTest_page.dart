@@ -20,18 +20,26 @@ class SingletestPage extends StatefulWidget {
 
 class _SingletestPageState extends State<SingletestPage> {
   String testText = "hola como estas";
+  @override
+  void initState() {
+    // TODO: implement initState
+    widget.cpmcontroller.clearController();
+    super.initState();
+  }
+
+  void updateText(String newtext) {
+    setState(() {
+      widget.cpmcontroller.clearController();
+      testText = newtext;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final mytheme = Theme.of(context).colorScheme;
     return Column(
       children: [
-        Testoptionsbar(
-          onCustom:
-              (newtext) => setState(() {
-                testText = newtext;
-              }),
-        ),
+        Testoptionsbar(onCustom: updateText),
         SizedBox(height: 40),
         Container(
           width: MediaQuery.of(context).size.width * .8,
@@ -44,13 +52,15 @@ class _SingletestPageState extends State<SingletestPage> {
             );
           }),
         ),
-        Textsection(
-          key: UniqueKey(),
-          onFinish: () {
-            widget.togglePage(1);
-          },
-          testText: testText,
-          cpmController: widget.cpmcontroller,
+        Container(
+          child: Textsection(
+            key: UniqueKey(),
+            onFinish: () {
+              widget.togglePage(1);
+            },
+            testText: testText,
+            cpmController: widget.cpmcontroller,
+          ),
         ),
       ],
     );

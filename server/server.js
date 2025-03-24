@@ -1,11 +1,18 @@
 const express = require("express");
 const errorHandler = require("./middlewares/errorHandler");
 const dbConnection = require("./config/dbConnection.js");
+const cors = require('cors');
 const dotenv = require("dotenv").config();
 
 dbConnection();
+
 const app = express();
-const port = process.env.PORT || 4000; 
+
+const port = process.env.PORT || 4000;
+
+app.use(cors({
+    origin: "*",
+}));
 
 app.use(express.json());
 app.use("/api/users/", require("./routes/userRoutes.js"));
