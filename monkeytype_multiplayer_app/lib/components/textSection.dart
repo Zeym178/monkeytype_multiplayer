@@ -318,10 +318,11 @@ class _Textsection extends State<Textsection> {
             final label = event.logicalKey.keyLabel;
             final keychar = event.character;
             if (event is KeyRepeatEvent || event is KeyDownEvent) {
+              final Set<String> keyMaped = {"Backspace"};
               if (keychar != null) {
                 print(keychar);
                 compare(keychar);
-              } else {
+              } else if (keyMaped.contains(label)) {
                 print(label);
                 compare(label);
               }

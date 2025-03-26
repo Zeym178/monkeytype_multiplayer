@@ -7,7 +7,12 @@ import 'package:monkeytype_multiplayer_app/services/authService.dart';
 
 class LoginRegisterPage extends StatefulWidget {
   final Function togglePage;
-  const LoginRegisterPage({super.key, required this.togglePage});
+  final Authservice authservice;
+  const LoginRegisterPage({
+    super.key,
+    required this.togglePage,
+    required this.authservice,
+  });
 
   @override
   State<LoginRegisterPage> createState() => _LoginRegisterPageState();
@@ -20,8 +25,11 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   final passwordController = TextEditingController();
   final password2Controller = TextEditingController();
 
-  Authservice authservice = Authservice();
+  final emailLoginController = TextEditingController();
+  final passwordLoginController = TextEditingController();
+
   String errorMessage = "";
+  String errorMessageLogin = "";
 
   bool checkValues() {
     if (emailController.text != email2Controller.text ||
@@ -35,8 +43,23 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
     return true;
   }
 
+  void loginUser() async {
+    final success = await widget.authservice.loginUser(
+      emailLoginController.text,
+      passwordLoginController.text,
+    );
+
+    if (success) {
+      widget.togglePage(3);
+    } else {
+      setState(() {
+        errorMessageLogin = "I don't know what happened";
+      });
+    }
+  }
+
   void createUser() async {
-    final success = await authservice.registerUser(
+    final success = await widget.authservice.registerUser(
       usernameController.text,
       emailController.text,
       passwordController.text,
@@ -138,7 +161,52 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
             ),
 
             // login
-            Container(height: 400, width: 200, color: Colors.red),
+            Container(
+              width: 250,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Center(child: Icon(Icons.person, color: mytheme.primary)),
+                      SizedBox(width: 5),
+                      Text(
+                        "Login",
+                        style: TextStyle(
+                          color: mytheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    child: Mytextfield(
+                      textController: emailLoginController,
+                      hint: "email",
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    child: Mytextfield(
+                      textController: passwordLoginController,
+                      hint: "password",
+                    ),
+                  ),
+                  Container(
+                    height: 45,
+                    child: Mybutton(
+                      onClick: () {
+                        loginUser();
+                      },
+                      text: "Log In",
+                      icon: Icons.person,
+                    ),
+                  ),
+                  Text(errorMessageLogin),
+                ],
+              ),
+            ),
           ],
         ),
       ],

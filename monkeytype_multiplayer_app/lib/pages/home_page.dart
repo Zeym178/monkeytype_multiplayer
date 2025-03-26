@@ -3,8 +3,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:monkeytype_multiplayer_app/components/hoverIcon.dart';
 import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 import 'package:monkeytype_multiplayer_app/pages/login_register_page.dart';
+import 'package:monkeytype_multiplayer_app/pages/profile_page.dart';
 import 'package:monkeytype_multiplayer_app/pages/results_page.dart';
 import 'package:monkeytype_multiplayer_app/pages/singleTest_page.dart';
+import 'package:monkeytype_multiplayer_app/services/authService.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +19,8 @@ class _HomePageState extends State<HomePage> {
   int pageIndex = 0;
   // double cpm = 0;
   // final ValueNotifier<double> cpm = ValueNotifier(0.0);
+  Authservice authservice = Authservice();
+
   Cpmcontroller cpmController = Cpmcontroller();
   void togglePage(int index) {
     setState(() {
@@ -37,7 +41,8 @@ class _HomePageState extends State<HomePage> {
     final pages = [
       SingletestPage(togglePage: togglePage, cpmcontroller: cpmController),
       ResultsPage(cpmController: cpmController, togglePage: togglePage),
-      LoginRegisterPage(togglePage: togglePage),
+      LoginRegisterPage(togglePage: togglePage, authservice: authservice),
+      ProfilePage(authservice: authservice),
     ];
 
     return Theme(
