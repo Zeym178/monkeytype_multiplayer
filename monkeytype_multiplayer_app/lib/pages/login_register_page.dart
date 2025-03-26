@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:monkeytype_multiplayer_app/components/myButton.dart';
 import 'package:monkeytype_multiplayer_app/components/myTextField.dart';
-import 'package:monkeytype_multiplayer_app/components/textSection.dart';
+import 'package:monkeytype_multiplayer_app/layout/myFooter.dart';
+import 'package:monkeytype_multiplayer_app/layout/myHeader.dart';
+import 'package:monkeytype_multiplayer_app/pages/profile_page.dart';
+import 'package:monkeytype_multiplayer_app/pages/singleTest_page.dart';
 import 'package:monkeytype_multiplayer_app/services/authService.dart';
 
 class LoginRegisterPage extends StatefulWidget {
-  final Function togglePage;
-  final Authservice authservice;
-  const LoginRegisterPage({
-    super.key,
-    required this.togglePage,
-    required this.authservice,
-  });
+  const LoginRegisterPage({super.key});
 
   @override
   State<LoginRegisterPage> createState() => _LoginRegisterPageState();
@@ -31,6 +27,8 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   String errorMessage = "";
   String errorMessageLogin = "";
 
+  Authservice authservice = Authservice();
+
   bool checkValues() {
     if (emailController.text != email2Controller.text ||
         passwordController != password2Controller) {
@@ -44,13 +42,16 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   }
 
   void loginUser() async {
-    final success = await widget.authservice.loginUser(
+    final success = await authservice.loginUser(
       emailLoginController.text,
       passwordLoginController.text,
     );
 
     if (success) {
-      widget.togglePage(3);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()),
+      );
     } else {
       setState(() {
         errorMessageLogin = "I don't know what happened";
@@ -59,7 +60,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   }
 
   void createUser() async {
-    final success = await widget.authservice.registerUser(
+    final success = await authservice.registerUser(
       usernameController.text,
       emailController.text,
       passwordController.text,
@@ -69,7 +70,10 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
       // you should create a controller that help if you have an account or not
       // if yes ? your data : login_register_page
       // maybe would be easier if you just create a header and a footer (might be the best option)
-      widget.togglePage(0);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SingletestPage()),
+      );
     } else {
       setState(() {
         errorMessage = "The field are not valid";

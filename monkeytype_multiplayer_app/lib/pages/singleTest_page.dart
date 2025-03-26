@@ -4,32 +4,31 @@ import 'package:get/state_manager.dart';
 import 'package:monkeytype_multiplayer_app/components/testOptionsBar.dart';
 import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 import 'package:monkeytype_multiplayer_app/components/textSection.dart';
+import 'package:monkeytype_multiplayer_app/layout/myFooter.dart';
+import 'package:monkeytype_multiplayer_app/layout/myHeader.dart';
+import 'package:monkeytype_multiplayer_app/pages/results_page.dart';
 
 class SingletestPage extends StatefulWidget {
-  final Cpmcontroller cpmcontroller;
-  final Function togglePage;
-  const SingletestPage({
-    super.key,
-    required this.togglePage,
-    required this.cpmcontroller,
-  });
+  const SingletestPage({super.key});
 
   @override
   State<SingletestPage> createState() => _SingletestPageState();
 }
 
 class _SingletestPageState extends State<SingletestPage> {
+  Cpmcontroller cpmController = Cpmcontroller();
   String testText = "hola como estas";
+
   @override
   void initState() {
     // TODO: implement initState
-    widget.cpmcontroller.clearController();
+    cpmController.clearController();
     super.initState();
   }
 
   void updateText(String newtext) {
     setState(() {
-      widget.cpmcontroller.clearController();
+      cpmController.clearController();
       testText = newtext;
     });
   }
@@ -37,32 +36,43 @@ class _SingletestPageState extends State<SingletestPage> {
   @override
   Widget build(BuildContext context) {
     final mytheme = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        Testoptionsbar(onCustom: updateText),
-        SizedBox(height: 40),
-        Container(
-          width: MediaQuery.of(context).size.width * .8,
-          alignment: Alignment.centerLeft,
-          child: Obx(() {
-            return Center(
-              child: Text(
-                'WPM: ' + (widget.cpmcontroller.cpm.value / 5).toString(),
-              ),
-            );
-          }),
-        ),
-        Container(
-          child: Textsection(
-            key: UniqueKey(),
-            onFinish: () {
-              widget.togglePage(1);
-            },
-            testText: testText,
-            cpmController: widget.cpmcontroller,
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Myheader(),
+
+          Testoptionsbar(onCustom: updateText),
+          SizedBox(height: 40),
+          Container(
+            width: MediaQuery.of(context).size.width * .8,
+            alignment: Alignment.centerLeft,
+            child: Obx(() {
+              return Center(
+                child: Text('WPM: ' + (cpmController.cpm.value / 5).toString()),
+              );
+            }),
           ),
-        ),
-      ],
+          Expanded(
+            child: Textsection(
+              key: UniqueKey(),
+              onFinish: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => ResultsPage(cpmController: cpmController),
+                  ),
+                );
+              },
+              testText: testText,
+              cpmController: cpmController,
+            ),
+          ),
+
+          Myfooter(),
+        ],
+      ),
     );
   }
 }

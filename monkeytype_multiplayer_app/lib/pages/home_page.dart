@@ -21,7 +21,6 @@ class _HomePageState extends State<HomePage> {
   // final ValueNotifier<double> cpm = ValueNotifier(0.0);
   Authservice authservice = Authservice();
 
-  Cpmcontroller cpmController = Cpmcontroller();
   void togglePage(int index) {
     setState(() {
       pageIndex = index;
@@ -39,10 +38,8 @@ class _HomePageState extends State<HomePage> {
     final mytheme = Theme.of(context).colorScheme;
 
     final pages = [
-      SingletestPage(togglePage: togglePage, cpmcontroller: cpmController),
-      ResultsPage(cpmController: cpmController, togglePage: togglePage),
-      LoginRegisterPage(togglePage: togglePage, authservice: authservice),
-      ProfilePage(authservice: authservice),
+      LoginRegisterPage(),
+      ProfilePage(),
     ];
 
     return Theme(
@@ -51,77 +48,12 @@ class _HomePageState extends State<HomePage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 200),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // right stuff
-                      MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap:
-                              () => setState(() {
-                                pageIndex = 0;
-                              }),
-                          child: Row(
-                            children: [
-                              // logo
-                              Center(
-                                child: SvgPicture.asset(
-                                  'assets/images/app_logo.svg',
-                                  height: 50,
-                                  width: 50,
-                                  color: mytheme.secondary,
-                                ),
-                              ),
+            
 
-                              SizedBox(width: 20),
+            // Expanded(child: pages[pageIndex]),
 
-                              // logo text
-                              Text(
-                                'MonkeyType Multiplayer',
-                                style: TextStyle(
-                                  color: mytheme.inversePrimary,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              SizedBox(width: 20),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // left stuff
-                      Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    pageIndex = 2;
-                                  });
-                                },
-                                child: Hovericon(icon: Icons.person),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ), // up bar
-            ),
-
-            Expanded(child: pages[pageIndex]),
+            // THIS PAGE IS OLD, IT'S GONNA RETIRE
+            Expanded(child: SingletestPage()),
 
             Container(height: 30, color: Colors.blue),
           ],

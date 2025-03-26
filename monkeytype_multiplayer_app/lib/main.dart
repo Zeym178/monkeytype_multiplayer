@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monkeytype_multiplayer_app/pages/home_page.dart';
+import 'package:monkeytype_multiplayer_app/pages/singleTest_page.dart';
 import 'package:monkeytype_multiplayer_app/themes/darkMode.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MonkeyType Multiplayer',
       theme: darkMode,
-      home: HomePage(),
+      home: SingletestPage(),
     );
   }
 }
