@@ -1,9 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:monkeytype_multiplayer_app/components/hoverIcon.dart';
+import 'package:monkeytype_multiplayer_app/components/myButton.dart';
 import 'package:monkeytype_multiplayer_app/helpers/authHelper.dart';
 import 'package:monkeytype_multiplayer_app/pages/login_register_page.dart';
+import 'package:monkeytype_multiplayer_app/pages/multiTest_page.dart';
 import 'package:monkeytype_multiplayer_app/pages/singleTest_page.dart';
+import 'package:monkeytype_multiplayer_app/services/authService.dart';
 
 class Myheader extends StatefulWidget {
   const Myheader({super.key});
@@ -13,6 +18,8 @@ class Myheader extends StatefulWidget {
 }
 
 class _MyheaderState extends State<Myheader> {
+  Authservice authservice = Authservice();
+
   @override
   Widget build(BuildContext context) {
     final mytheme = Theme.of(context).colorScheme;
@@ -29,7 +36,7 @@ class _MyheaderState extends State<Myheader> {
                 child: GestureDetector(
                   onTap:
                       () => setState(() {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => SingletestPage(),
@@ -69,6 +76,40 @@ class _MyheaderState extends State<Myheader> {
               // right stuff
               Row(
                 children: [
+                  // multiplayer button (improvable)
+                  FutureBuilder(
+                    future: authservice.isLoggedIn(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.hasData && snapshot.data != null) {
+                        final isLoggedin = snapshot.data!;
+                        return Visibility(
+                          visible: isLoggedin,
+                          child: Container(
+                            height: 40,
+                            width: 100,
+                            child: Mybutton(
+                              text: "Try a Race !",
+                              onClick: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MultitestPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Center(child: Icon(Icons.error));
+                    },
+                  ),
+
                   Container(
                     width: 50,
                     height: 50,

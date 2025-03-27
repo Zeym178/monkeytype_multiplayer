@@ -4,6 +4,7 @@ import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 import 'package:monkeytype_multiplayer_app/layout/myFooter.dart';
 import 'package:monkeytype_multiplayer_app/layout/myHeader.dart';
 import 'package:monkeytype_multiplayer_app/pages/home_page.dart';
+import 'package:monkeytype_multiplayer_app/pages/singleTest_page.dart';
 
 class ResultsPage extends StatefulWidget {
   // final double cpm;
@@ -43,13 +44,6 @@ class _ResultsPageState extends State<ResultsPage> {
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    widget.cpmController.clearController();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final mytheme = Theme.of(context).colorScheme;
     final wpm = widget.cpmController.cpm.value / 5;
@@ -81,7 +75,9 @@ class _ResultsPageState extends State<ResultsPage> {
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
+                        MaterialPageRoute(
+                          builder: (context) => SingletestPage(),
+                        ),
                       );
                     },
                     child: Container(

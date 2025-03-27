@@ -48,9 +48,7 @@ class _SingletestPageState extends State<SingletestPage> {
             width: MediaQuery.of(context).size.width * .8,
             alignment: Alignment.centerLeft,
             child: Obx(() {
-              return Center(
-                child: Text('WPM: ' + (cpmController.cpm.value / 5).toString()),
-              );
+              return Center(child: Text('WPM: ${cpmController.cpm.value / 5}'));
             }),
           ),
           Expanded(

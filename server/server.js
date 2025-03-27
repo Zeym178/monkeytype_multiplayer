@@ -22,8 +22,22 @@ const server = app.listen(port, () => {
     console.log("The server is running in the port: " + port);
 });
 
-// const io = require("socket.io")(server);
+const io = require("socket.io")(server);
 
-// io.on("connection", (socket) => {
-//     console.log("The user " + socket + " is conncted!");
-// });
+const connectedUsers = new Set();
+
+io.on("connection", (socket) => {
+    console.log("The user " + socket.id + " is connected!");
+    connectedUsers.add(socket.id);
+    io.emit("connected-users", connectedUsers.size);
+    socket.on("disconnect", () => {
+        console.log("The user " + socket.id + " has disconnected");
+        connectedUsers.delete(socket.id);
+        io.emit("connected-users", connectedUsers.size);
+    });
+
+    socket.on("message", (data) => {
+        console.log(data);
+        socket.broadcast.emit("message-received", data);
+    });
+});

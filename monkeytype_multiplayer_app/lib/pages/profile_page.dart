@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monkeytype_multiplayer_app/components/myButton.dart';
+import 'package:monkeytype_multiplayer_app/helpers/authHelper.dart';
 import 'package:monkeytype_multiplayer_app/layout/myFooter.dart';
 import 'package:monkeytype_multiplayer_app/layout/myHeader.dart';
 import 'package:monkeytype_multiplayer_app/pages/login_register_page.dart';
@@ -40,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginRegisterPage()),
+        MaterialPageRoute(builder: (context) => Authhelper()),
       );
     }
   }

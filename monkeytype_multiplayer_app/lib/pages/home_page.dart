@@ -37,10 +37,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final mytheme = Theme.of(context).colorScheme;
 
-    final pages = [
-      LoginRegisterPage(),
-      ProfilePage(),
-    ];
+    final pages = [LoginRegisterPage(), ProfilePage()];
 
     return Theme(
       data: Theme.of(context),
@@ -48,8 +45,6 @@ class _HomePageState extends State<HomePage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            
-
             // Expanded(child: pages[pageIndex]),
 
             // THIS PAGE IS OLD, IT'S GONNA RETIRE
