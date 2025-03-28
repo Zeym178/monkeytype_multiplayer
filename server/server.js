@@ -40,4 +40,10 @@ io.on("connection", (socket) => {
         console.log(data);
         socket.broadcast.emit("message-received", data);
     });
+
+    socket.on("cpm", (data) => {
+        var idk = { cpm: data, sentBy: socket.id };
+        console.log(idk);
+        socket.broadcast.emit("cpm-received", { cpm: data, sentBy: socket.id });
+    });
 });

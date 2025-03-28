@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:monkeytype_multiplayer_app/components/textSection.dart';
+import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 import 'package:monkeytype_multiplayer_app/controllers/multiplayerController.dart';
 import 'package:monkeytype_multiplayer_app/layout/myFooter.dart';
 import 'package:monkeytype_multiplayer_app/layout/myHeader.dart';
@@ -15,6 +17,7 @@ class MultitestPage extends StatefulWidget {
 class _MultitestPageState extends State<MultitestPage> {
   Multiplayercontroller multiplayercontroller = Multiplayercontroller();
   late Multiplayerservice multiplayerservice;
+  Cpmcontroller cpmcontroller = Cpmcontroller();
 
   @override
   void initState() {
@@ -48,6 +51,15 @@ class _MultitestPageState extends State<MultitestPage> {
             ),
           ),
           Text("You're in a race !"),
+          Obx(
+            () => Text("Other's cpm: ${multiplayercontroller.otherCpm.value}"),
+          ),
+          Textsection(
+            multiplayerservice: multiplayerservice,
+            onFinish: () {},
+            cpmController: cpmcontroller,
+            testText: "hola amiguitos como estamos",
+          ),
           Myfooter(),
         ],
       ),

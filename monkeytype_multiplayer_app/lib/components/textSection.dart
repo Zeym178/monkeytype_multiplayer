@@ -2,13 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
+import 'package:monkeytype_multiplayer_app/controllers/multiplayerController.dart';
+import 'package:monkeytype_multiplayer_app/services/multiplayerService.dart';
 
 class Textsection extends StatefulWidget {
+  Multiplayerservice? multiplayerservice;
   final VoidCallback onFinish;
   final Cpmcontroller cpmController;
   final String testText;
-  const Textsection({
+  Textsection({
     super.key,
+    this.multiplayerservice,
     required this.onFinish,
     required this.cpmController,
     required this.testText,
@@ -61,6 +65,7 @@ class _Textsection extends State<Textsection> {
           wordsTypedRight,
           wordsTypedWrong,
         );
+        widget.multiplayerservice?.sendCpm(cpm);
         wrongspspan = 0;
       });
     });
@@ -86,6 +91,7 @@ class _Textsection extends State<Textsection> {
       wordsTypedWrong,
     );
     wrongspspan = 0;
+    widget.multiplayerservice?.sendCpm(cpm);
     widget.onFinish();
   }
 
