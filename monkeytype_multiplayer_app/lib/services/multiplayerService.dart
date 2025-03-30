@@ -1,5 +1,4 @@
 import 'package:monkeytype_multiplayer_app/controllers/multiplayerController.dart';
-import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Multiplayerservice {

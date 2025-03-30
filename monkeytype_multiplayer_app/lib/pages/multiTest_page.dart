@@ -53,12 +53,10 @@ class _MultitestPageState extends State<MultitestPage> {
           ),
           Text("You're in a race !"),
           Obx(() {
-            double value = multiplayercontroller.otherCpm.value;
-            // return Text("Other's cpm: $value");
+            double wpm = multiplayercontroller.otherCpm.value / 5;
             return Container(
-              height: 40,
-              width: 400,
-              child: Userraceline(cpm: value),
+              width: MediaQuery.of(context).size.width * .8,
+              child: Userraceline(),
             );
           }),
           Textsection(

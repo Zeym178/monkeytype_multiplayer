@@ -2,35 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class Userraceline extends StatefulWidget {
-  final double cpm;
-  const Userraceline({super.key, required this.cpm});
+  const Userraceline({super.key});
 
   @override
   State<Userraceline> createState() => _UserracelineState();
 }
 
 class _UserracelineState extends State<Userraceline> {
-  double x = 0, y = 0;
-
-  void updatePos(double nx, double ny) {
-    setState(() {
-      x = nx;
-      y = ny;
-    });
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(color: Colors.blue),
+            child: UserItem(x: 0, y: 0),
+          ),
+        ),
+        SizedBox(width: 20),
+        Text("wpm"),
+      ],
+    );
   }
+}
+
+class UserItem extends StatelessWidget {
+  final double x;
+  final double y;
+  const UserItem({super.key, required this.x, required this.y});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
+    return Container(
+      alignment: Alignment(x, y),
       child: Container(
         height: 20,
         width: 20,
-        alignment: Alignment(x, y),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.red,
-        ),
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.red),
       ),
     );
   }
