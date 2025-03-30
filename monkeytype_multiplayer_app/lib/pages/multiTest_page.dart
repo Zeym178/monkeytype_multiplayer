@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:monkeytype_multiplayer_app/components/textSection.dart';
+import 'package:monkeytype_multiplayer_app/components/userRaceline.dart';
 import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
 import 'package:monkeytype_multiplayer_app/controllers/multiplayerController.dart';
 import 'package:monkeytype_multiplayer_app/layout/myFooter.dart';
@@ -51,9 +52,15 @@ class _MultitestPageState extends State<MultitestPage> {
             ),
           ),
           Text("You're in a race !"),
-          Obx(
-            () => Text("Other's cpm: ${multiplayercontroller.otherCpm.value}"),
-          ),
+          Obx(() {
+            double value = multiplayercontroller.otherCpm.value;
+            // return Text("Other's cpm: $value");
+            return Container(
+              height: 40,
+              width: 400,
+              child: Userraceline(cpm: value),
+            );
+          }),
           Textsection(
             multiplayerservice: multiplayerservice,
             onFinish: () {},
