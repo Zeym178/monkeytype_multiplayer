@@ -9,17 +9,7 @@ class Cpmcontroller extends GetxController {
   int wordsTypedRight = 0, wordsTypedWrong = 0;
   double acc = 0;
 
-  List cpmReg =
-      [
-        [1, 400, 0],
-        [2, 530, 2],
-        [3, 340, 1],
-        [4, 370, 0],
-        [5, 500, 0],
-        [6, 540, 2],
-        [7, 570, 1],
-        [7.83, 540, 0],
-      ].obs;
+  List cpmReg = [].obs;
 
   void clearController() {
     cpm.value = 0;

@@ -2,13 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class Userraceline extends StatefulWidget {
-  const Userraceline({super.key});
+  final double percentage;
+  final double wpm;
+  const Userraceline({super.key, required this.percentage, required this.wpm});
 
   @override
   State<Userraceline> createState() => _UserracelineState();
 }
 
 class _UserracelineState extends State<Userraceline> {
+  late final double _x;
+  late final double _wpm;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _x = (widget.percentage * 2 / 100) - 1;
+
+    int aux = (widget.wpm * 100).toInt();
+    _wpm = aux.toDouble() / 100;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -16,11 +31,11 @@ class _UserracelineState extends State<Userraceline> {
         Expanded(
           child: Container(
             decoration: BoxDecoration(color: Colors.blue),
-            child: UserItem(x: 0, y: 0),
+            child: UserItem(x: _x, y: 0),
           ),
         ),
         SizedBox(width: 20),
-        Text("wpm"),
+        SizedBox(width: 50, child: Text(_wpm.toString())),
       ],
     );
   }

@@ -29,11 +29,12 @@ const connectedUsers = new Set();
 io.on("connection", (socket) => {
     console.log("The user " + socket.id + " is connected!");
     connectedUsers.add(socket.id);
-    io.emit("connected-users", connectedUsers.size);
+    io.emit("connected-users", Array.from(connectedUsers));
     socket.on("disconnect", () => {
         console.log("The user " + socket.id + " has disconnected");
         connectedUsers.delete(socket.id);
-        io.emit("connected-users", connectedUsers.size);
+        // io.emit("connected-users", connectedUsers.size);
+        io.emit("connected-users", Array.from(connectedUsers));
     });
 
     socket.on("message", (data) => {
@@ -44,6 +45,6 @@ io.on("connection", (socket) => {
     socket.on("cpm", (data) => {
         var idk = { cpm: data, sentBy: socket.id };
         console.log(idk);
-        socket.broadcast.emit("cpm-received", { cpm: data, sentBy: socket.id });
+        socket.broadcast.emit("cpm-received", { data: data, sentBy: socket.id });
     });
 });

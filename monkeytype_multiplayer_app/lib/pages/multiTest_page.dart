@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:monkeytype_multiplayer_app/components/textSection.dart';
@@ -52,11 +54,46 @@ class _MultitestPageState extends State<MultitestPage> {
             ),
           ),
           Text("You're in a race !"),
+          // Obx(() {
+          //   double wpm = cpmcontroller.cpm.value / 5;
+          //   return Container(
+          //     width: MediaQuery.of(context).size.width * .8,
+          //     child: Userraceline(
+          //       key: UniqueKey(),
+          //       percentage: multiplayercontroller.yourPercentage.value,
+          //       wpm: wpm,
+          //     ),
+          //   );
+          // }),
+          // Obx(() {
+          //   double wpm = multiplayercontroller.otherCpm.value / 5;
+          //   return Container(
+          //     width: MediaQuery.of(context).size.width * .8,
+          //     child: Userraceline(
+          //       key: UniqueKey(),
+          //       percentage: multiplayercontroller.otherPercentange.value,
+          //       wpm: wpm,
+          //     ),
+          //   );
+          // }),
           Obx(() {
-            double wpm = multiplayercontroller.otherCpm.value / 5;
-            return Container(
-              width: MediaQuery.of(context).size.width * .8,
-              child: Userraceline(),
+            return Expanded(
+              child: Center(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: multiplayercontroller.othersInfo.length,
+                  itemBuilder: (context, index) {
+                    final user = multiplayercontroller.usersList[index];
+                    final usersInfo = multiplayercontroller.othersInfo;
+                    return Userraceline(
+                      key: UniqueKey(),
+                      percentage: usersInfo[user]['percentage'],
+                      wpm: (usersInfo[user]['cpm'] / 5),
+                    );
+                  },
+                ),
+              ),
             );
           }),
           Textsection(

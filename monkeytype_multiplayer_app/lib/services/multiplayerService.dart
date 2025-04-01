@@ -1,3 +1,4 @@
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:monkeytype_multiplayer_app/controllers/multiplayerController.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -23,19 +24,30 @@ class Multiplayerservice {
     onMessageReceived();
   }
 
-  void sendCpm(double cpm) {
-    socket.emit("cpm", cpm);
+  void sendCpm(double cpm, double percentange) {
+    socket.emit("cpm", {"cpm": cpm, "percentage": percentange});
+    multiplayercontroller.yourPercentage.value = percentange;
   }
 
   void onMessageReceived() {
     socket.on("connected-users", (data) {
       print(data);
-      multiplayercontroller.usersConnected.value = data;
+      // multiplayercontroller.usersConnected.value = data;
+      var auxmap = <String, dynamic>{};
+      for (var i = 0; i < data.length; i++) {
+        auxmap[data[i]] = {"cpm": 0.0, "percentage": 0.0};
+      }
+      multiplayercontroller.othersInfo.value = auxmap;
+      multiplayercontroller.usersList.value = data;
+      multiplayercontroller.usersConnected.value = data.length;
     });
 
     socket.on("cpm-received", (data) {
-      double value = data['cpm'];
-      multiplayercontroller.otherCpm.value = value;
+      String otherId = data['sentBy'];
+      // print(data['data']);
+      multiplayercontroller.othersInfo[otherId] = data['data'];
+      print("nose");
+      print(multiplayercontroller.othersInfo[otherId]);
     });
   }
 

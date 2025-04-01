@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:monkeytype_multiplayer_app/controllers/cpmController.dart';
-import 'package:monkeytype_multiplayer_app/controllers/multiplayerController.dart';
 import 'package:monkeytype_multiplayer_app/services/multiplayerService.dart';
 
 class Textsection extends StatefulWidget {
@@ -41,6 +40,8 @@ class _Textsection extends State<Textsection> {
   int wordsTypedRight = 0;
   int wordsTypedWrong = 0;
 
+  double percentage = 0;
+
   double cpmsf = 0;
   double cpm = 0;
 
@@ -65,7 +66,7 @@ class _Textsection extends State<Textsection> {
           wordsTypedRight,
           wordsTypedWrong,
         );
-        widget.multiplayerservice?.sendCpm(cpm);
+        widget.multiplayerservice?.sendCpm(cpm, percentage);
         wrongspspan = 0;
       });
     });
@@ -91,7 +92,7 @@ class _Textsection extends State<Textsection> {
       wordsTypedWrong,
     );
     wrongspspan = 0;
-    widget.multiplayerservice?.sendCpm(cpm);
+    widget.multiplayerservice?.sendCpm(cpm, percentage);
     widget.onFinish();
   }
 
@@ -160,7 +161,10 @@ class _Textsection extends State<Textsection> {
           isRight = true;
           wrongsf = 0;
         }
-        if (!isRight && key == ' ' && _text[userIndex]['char'] != ' ') {
+        if (!isRight &&
+            key == ' ' &&
+            _text[userIndex]['char'] != ' ' &&
+            widget.multiplayerservice == null) {
           wrongsf = 0;
           isRight = true;
           wordsIniIndex++;
@@ -201,6 +205,7 @@ class _Textsection extends State<Textsection> {
           return;
         }
         wordsTypedRight++;
+        percentage = wordsTypedRight * 100 / TypeText.length;
         _text[userIndex]['color'] = 1;
         getListValues();
         userIndex++;
