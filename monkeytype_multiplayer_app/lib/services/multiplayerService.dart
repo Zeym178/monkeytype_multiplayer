@@ -1,4 +1,3 @@
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:monkeytype_multiplayer_app/controllers/multiplayerController.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -6,12 +5,14 @@ class Multiplayerservice {
   late IO.Socket socket;
   late Multiplayercontroller multiplayercontroller;
   String BASE_URL = "http://localhost:5000";
+  String roomName = "";
 
   Multiplayerservice(Multiplayercontroller mc) {
     multiplayercontroller = mc;
   }
 
-  void startConnection() {
+  void startConnection(String localRoomName) {
+    roomName = localRoomName;
     socket = IO.io(
       BASE_URL,
       IO.OptionBuilder()
@@ -21,11 +22,16 @@ class Multiplayerservice {
     );
 
     socket.connect();
+    socket.emit("join-socket", roomName);
     onMessageReceived();
   }
 
   void sendCpm(double cpm, double percentange) {
-    socket.emit("cpm", {"cpm": cpm, "percentage": percentange});
+    socket.emit("cpm", {
+      "roomName": roomName,
+      "cpm": cpm,
+      "percentage": percentange,
+    });
     multiplayercontroller.yourPercentage.value = percentange;
   }
 
@@ -34,8 +40,13 @@ class Multiplayerservice {
       print(data);
       // multiplayercontroller.usersConnected.value = data;
       var auxmap = <String, dynamic>{};
+      var auxOri = multiplayercontroller.othersInfo;
       for (var i = 0; i < data.length; i++) {
-        auxmap[data[i]] = {"cpm": 0.0, "percentage": 0.0};
+        if (auxOri.containsKey(data[i])) {
+          auxmap[data[i]] = auxOri[data[i]];
+        } else {
+          auxmap[data[i]] = {"cpm": 0.0, "percentage": 0.0};
+        }
       }
       multiplayercontroller.othersInfo.value = auxmap;
       multiplayercontroller.usersList.value = data;

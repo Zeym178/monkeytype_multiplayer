@@ -11,7 +11,8 @@ import 'package:monkeytype_multiplayer_app/layout/myHeader.dart';
 import 'package:monkeytype_multiplayer_app/services/multiplayerService.dart';
 
 class MultitestPage extends StatefulWidget {
-  const MultitestPage({super.key});
+  final String roomName;
+  const MultitestPage({super.key, required this.roomName});
 
   @override
   State<MultitestPage> createState() => _MultitestPageState();
@@ -30,7 +31,7 @@ class _MultitestPageState extends State<MultitestPage> {
     // connection to the websocket (maybe give it our username / email)
     // by now just the websocket id so we can handle it easier and we can test (hello)
     multiplayerservice = Multiplayerservice(multiplayercontroller);
-    multiplayerservice.startConnection();
+    multiplayerservice.startConnection(widget.roomName);
   }
 
   @override

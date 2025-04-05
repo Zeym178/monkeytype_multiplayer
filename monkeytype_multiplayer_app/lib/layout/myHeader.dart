@@ -5,6 +5,7 @@ import 'package:get/get_navigation/src/snackbar/snackbar.dart';
 import 'package:monkeytype_multiplayer_app/components/hoverIcon.dart';
 import 'package:monkeytype_multiplayer_app/components/myButton.dart';
 import 'package:monkeytype_multiplayer_app/helpers/authHelper.dart';
+import 'package:monkeytype_multiplayer_app/pages/findRace_page.dart';
 import 'package:monkeytype_multiplayer_app/pages/login_register_page.dart';
 import 'package:monkeytype_multiplayer_app/pages/multiTest_page.dart';
 import 'package:monkeytype_multiplayer_app/pages/singleTest_page.dart';
@@ -97,7 +98,8 @@ class _MyheaderState extends State<Myheader> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MultitestPage(),
+                                    // builder: (context) => MultitestPage(),
+                                    builder: (context) => FindracePage(),
                                   ),
                                 );
                               },
